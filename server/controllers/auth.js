@@ -18,6 +18,7 @@ export const register = async (req, res) => {
 
     const salt = await bcrypt.genSalt();
     const passwordHash = await bcrypt.hash(password, salt);
+    const locationObject = JSON.parse(location);
 
     const newUser = new User({
       firstName,
@@ -26,7 +27,7 @@ export const register = async (req, res) => {
       password: passwordHash,
       picturePath,
       friends,
-      location,
+      location: locationObject,
       occupation,
       viewedProfile: Math.floor(Math.random() * 10000),
       impressions: Math.floor(Math.random() * 10000),
@@ -50,7 +51,7 @@ export const login = async (req, res) => {
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
     delete user.password;
-    res.status(200).json({ token, user });
+    res.status(200).json({ token, user, msg: "Success" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
