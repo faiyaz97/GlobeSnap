@@ -45,6 +45,7 @@ import {
     
   
     const handlePost = async () => {
+      if (isImage) setIsImage(!isImage);
       const formData = new FormData();
       formData.append("userId", _id);
       formData.append("description", post);

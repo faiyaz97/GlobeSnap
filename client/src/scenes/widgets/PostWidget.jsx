@@ -11,7 +11,8 @@ import Friend from "components/Friend";
 import WidgetWrapper from "components/WidgetWrapper";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setPost } from "state";
+import { setPost, setPosts } from "state";
+import MoreOptionsDialog from "components/MoreOptionsDialog";
 
 const PostWidget = ({
   postId,
@@ -24,6 +25,7 @@ const PostWidget = ({
   likes,
   comments,
 }) => {
+  const [dialogOpen, setDialogOpen] = useState(false);
   const [isComments, setIsComments] = useState(false);
   const dispatch = useDispatch();
   const token = useSelector((state) => state.token);
@@ -34,6 +36,29 @@ const PostWidget = ({
   const { palette } = useTheme();
   const main = palette.neutral.main;
   const primary = palette.primary.main;
+
+  const deletePost = async (postId) => {
+    try {
+      const response = await fetch(`http://localhost:3001/posts/${postId}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+  
+      if (response.ok) {
+        const posts = await response.json();
+        // Update your posts state with the updatedPosts
+        dispatch(setPosts({ posts }));
+        console.log('Post deleted successfully');
+      } else {
+        console.error('Failed to delete the post');
+      }
+    } catch (error) {
+      console.error('Error while deleting the post:', error);
+    }
+  };
 
   const patchLike = async () => {
     const response = await fetch(`http://localhost:3001/posts/${postId}/like`, {
@@ -46,6 +71,14 @@ const PostWidget = ({
     });
     const updatedPost = await response.json();
     dispatch(setPost({ post: updatedPost }));
+  };
+
+  const handleDialogClose = () => {
+    setDialogOpen(false);
+  };
+
+  const handleMoreHorizClick = () => {
+    setDialogOpen(true);
   };
 
   return (
@@ -89,9 +122,14 @@ const PostWidget = ({
           </FlexBetween>
         </FlexBetween>
 
-        <IconButton>
-          <MoreHoriz />
-        </IconButton>
+        {postUserId === loggedInUserId ? (
+          <IconButton onClick={handleMoreHorizClick}>
+            <MoreHoriz />
+          </IconButton>
+
+        ) : ( <></> )}
+
+
       </FlexBetween>
       {isComments && (
         <Box mt="0.5rem">
@@ -106,6 +144,14 @@ const PostWidget = ({
           <Divider />
         </Box>
       )}
+      <MoreOptionsDialog
+        open={dialogOpen}
+        handleClose={handleDialogClose}
+        postId={postId}
+        onDeletePost={deletePost}
+      />
+
+
     </WidgetWrapper>
   );
 };
