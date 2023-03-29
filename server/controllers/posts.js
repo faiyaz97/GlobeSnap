@@ -4,27 +4,41 @@ import User from "../models/User.js";
 /* CREATE */
 export const createPost = async (req, res) => {
   try {
-    const { userId, description, picturePath } = req.body;
+    const { userId, description, picturePath, location } = req.body;
     const user = await User.findById(userId);
+    const locationObject = JSON.parse(location);
+
     const newPost = new Post({
       userId,
       firstName: user.firstName,
       lastName: user.lastName,
-      location: user.location,
+      location: locationObject,
       description,
       userPicturePath: user.picturePath,
       picturePath,
       likes: {},
-      comments: [],
+      comments: []
     });
     await newPost.save();
 
-    const post = await Post.find();
+    const post = await Post.find().sort({ _id: -1 });
     res.status(201).json(post);
   } catch (err) {
     res.status(409).json({ message: err.message });
   }
 };
+
+/* DELETE */
+export const deletePost = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deletedPost = await Post.findByIdAndDelete(id);
+    res.status(200).json(deletedPost);
+  } catch (err) {
+    res.status(404).json({ message: err.message });
+  }
+};
+
 
 /* READ */
 export const getFeedPosts = async (req, res) => {
@@ -71,3 +85,6 @@ export const likePost = async (req, res) => {
     res.status(404).json({ message: err.message });
   }
 };
+
+
+export default { createPost, deletePost, getFeedPosts, getUserPosts, likePost };

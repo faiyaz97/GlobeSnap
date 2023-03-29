@@ -1,9 +1,9 @@
 import {
-    EditOutlined,
+    MoreHorizIcon ,
     DeleteOutlined,
     AttachFileOutlined,
     GifBoxOutlined,
-    ImageOutlined,
+    AddPhotoAlternateOutlined,
     MicOutlined,
     MoreHorizOutlined,
   } from "@mui/icons-material";
@@ -16,6 +16,8 @@ import {
     Button,
     IconButton,
     useMediaQuery,
+    Autocomplete,
+    TextField 
   } from "@mui/material";
   import FlexBetween from "components/FlexBetween";
   import Dropzone from "react-dropzone";
@@ -24,8 +26,12 @@ import {
   import { useState } from "react";
   import { useDispatch, useSelector } from "react-redux";
   import { setPosts } from "state";
+  import countries from 'data/countries.json';
   
   const MyPostWidget = ({ picturePath }) => {
+    const isNonMobile = useMediaQuery("(min-width:600px)");
+    const [selectedCountry, setSelectedCountry] = useState(null);
+    const [imageUrl, setImageUrl] = useState("");
     const dispatch = useDispatch();
     const [isImage, setIsImage] = useState(false);
     const [image, setImage] = useState(null);
@@ -36,6 +42,7 @@ import {
     const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
     const mediumMain = palette.neutral.mediumMain;
     const medium = palette.neutral.medium;
+    
   
     const handlePost = async () => {
       const formData = new FormData();
@@ -45,6 +52,10 @@ import {
         formData.append("picture", image);
         formData.append("picturePath", image.name);
       }
+      if (selectedCountry) {
+        formData.append("location", JSON.stringify(selectedCountry));
+      }
+    
   
       const response = await fetch(`http://localhost:3001/posts`, {
         method: "POST",
@@ -54,118 +65,182 @@ import {
       const posts = await response.json();
       dispatch(setPosts({ posts }));
       setImage(null);
+      setImageUrl(null)
       setPost("");
+      setSelectedCountry(null);
+
     };
   
     return (
       <WidgetWrapper>
+        {isImage && (
+          <Box mb="1.5rem">
+            <Dropzone
+              acceptedFiles=".jpg,.jpeg,.png"
+              multiple={false}
+              onDrop={(acceptedFiles) => {
+                setImage(acceptedFiles[0]);
+                const fileUrl = URL.createObjectURL(acceptedFiles[0]);
+                setImageUrl(fileUrl);
+              }}
+            >
+              {({ getRootProps, getInputProps }) => (
+                <FlexBetween>
+                  {image ? (
+                    <IconButton
+                      onClick={() => {
+                        setImage(null)
+                        setImageUrl(null)
+                      }}
+                      sx={{mr: "40px"}}
+                    >
+                      <DeleteOutlined />
+                    </IconButton>
+                  ) : (
+                    <FlexBetween sx={{mr: "74px"}}>
+                    </FlexBetween>
+                    
+                  )}
+                  <Box
+                    {...getRootProps()}
+                    border={`2px dashed ${palette.primary.main}`}
+                    p="1rem"
+                    width="100%"
+                    sx={{
+                      display: "flex", 
+                      justifyContent: "center", 
+                      alignItems: "center",
+                      "&:hover": { cursor: "pointer" }  
+                    }}
+                  >
+                    <input {...getInputProps()} />
+                    {!imageUrl  ? (
+                            <Typography>
+                            Add Picture
+                            </Typography>
+                          ) : (
+                            <img src={imageUrl} alt="uploaded" height="200px" />
+                          )}
+                  </Box>
+                
+                </FlexBetween>
+              )}
+            </Dropzone>
+            
+          </Box>
+        )}
+        
+
+      
         <FlexBetween gap="1.5rem">
           <UserImage image={picturePath} />
           <InputBase
             placeholder="What's on your mind..."
             onChange={(e) => setPost(e.target.value)}
             value={post}
+            multiline
             sx={{
               width: "100%",
+              minHeight: "6rem",
               backgroundColor: palette.neutral.light,
-              borderRadius: "2rem",
+              borderRadius: "2px",
               padding: "1rem 2rem",
             }}
           />
+
         </FlexBetween>
-        {isImage && (
-          <Box
-            border={`1px solid ${medium}`}
-            borderRadius="5px"
-            mt="1rem"
-            p="1rem"
+
+        
+
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            pl: "74px",
+            pt: "1rem"
+          }}
+        >
+          <FlexBetween
+            
+            sx={{ gap: "1.5rem" }}
           >
-            <Dropzone
-              acceptedFiles=".jpg,.jpeg,.png"
-              multiple={false}
-              onDrop={(acceptedFiles) => setImage(acceptedFiles[0])}
-            >
-              {({ getRootProps, getInputProps }) => (
-                <FlexBetween>
-                  <Box
-                    {...getRootProps()}
-                    border={`2px dashed ${palette.primary.main}`}
-                    p="1rem"
-                    width="100%"
-                    sx={{ "&:hover": { cursor: "pointer" } }}
-                  >
-                    <input {...getInputProps()} />
-                    {!image ? (
-                      <p>Add Image Here</p>
-                    ) : (
-                      <FlexBetween>
-                        <Typography>{image.name}</Typography>
-                        <EditOutlined />
-                      </FlexBetween>
-                    )}
-                  </Box>
-                  {image && (
-                    <IconButton
-                      onClick={() => setImage(null)}
-                      sx={{ width: "15%" }}
-                    >
-                      <DeleteOutlined />
-                    </IconButton>
-                  )}
-                </FlexBetween>
-              )}
-            </Dropzone>
-          </Box>
-        )}
-  
-        <Divider sx={{ margin: "1.25rem 0" }} />
-  
-        <FlexBetween>
-          <FlexBetween gap="0.25rem" onClick={() => setIsImage(!isImage)}>
-            <ImageOutlined sx={{ color: mediumMain }} />
-            <Typography
-              color={mediumMain}
-              sx={{ "&:hover": { cursor: "pointer", color: medium } }}
-            >
-              Image
-            </Typography>
-          </FlexBetween>
-  
-          {isNonMobileScreens ? (
-            <>
-              <FlexBetween gap="0.25rem">
-                <GifBoxOutlined sx={{ color: mediumMain }} />
-                <Typography color={mediumMain}>Clip</Typography>
-              </FlexBetween>
-  
-              <FlexBetween gap="0.25rem">
-                <AttachFileOutlined sx={{ color: mediumMain }} />
-                <Typography color={mediumMain}>Attachment</Typography>
-              </FlexBetween>
-  
-              <FlexBetween gap="0.25rem">
-                <MicOutlined sx={{ color: mediumMain }} />
-                <Typography color={mediumMain}>Audio</Typography>
-              </FlexBetween>
-            </>
-          ) : (
-            <FlexBetween gap="0.25rem">
-              <MoreHorizOutlined sx={{ color: mediumMain }} />
-            </FlexBetween>
-          )}
-  
-          <Button
-            disabled={!post}
-            onClick={handlePost}
+
+            <Autocomplete
             sx={{
-              color: palette.background.alt,
-              backgroundColor: palette.primary.main,
-              borderRadius: "3rem",
+              backgroundColor: palette.neutral.light, // Add any style you want here
+              '& .MuiOutlinedInput-root': {
+                borderRadius: "100px",
+                width:"12rem",
+                '& .MuiOutlinedInput-notchedOutline': {
+                  border: 'none',
+                },
+              },
             }}
-          >
-            POST
-          </Button>
-        </FlexBetween>
+              options={countries}
+              getOptionLabel={(option) => option.name}
+              value={selectedCountry}
+              onChange={(event, newValue) => {
+                setSelectedCountry(newValue);
+              }}
+              renderOption={(props, option) => (
+                <Box component="li" sx={{ "& > img": { mr: 2, flexShrink: 0 } }} {...props}>
+                  <img
+                    loading="lazy"
+                    width="20"
+                    src={`https://flagcdn.com/w20/${option.code.toLowerCase()}.png`}
+                    srcSet={`https://flagcdn.com/w40/${option.code.toLowerCase()}.png 2x`}
+                    alt={`${option.name} flag`}
+                  />
+                  {option.name}
+                </Box>
+              )}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label= "Country"
+                  InputProps={{
+                    ...params.InputProps,
+                    startAdornment: selectedCountry ? (
+                      <img src={`https://flagcdn.com/w20/${selectedCountry.code.toLowerCase()}.png`} alt={`${selectedCountry.name} flag`} />
+                    ) : null,
+                  }}
+                />
+              )}
+            />
+
+
+            <AddPhotoAlternateOutlined 
+              sx={{ fontSize: '2rem', color: mediumMain, "&:hover": { cursor: "pointer", color: medium } }} 
+              onClick={() => {
+                setIsImage(!isImage)
+                if(isImage){
+                  setImage(null)
+                  setImageUrl(null)
+                }
+              }}
+              
+              />
+          </FlexBetween>
+
+        
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Button
+              disabled={!post || !selectedCountry}
+              onClick={handlePost}
+              sx={{
+                color: palette.background.alt,
+                backgroundColor: palette.primary.main,
+                borderRadius: "3rem",
+                marginLeft: "1rem",
+              }}
+            >
+              POST
+            </Button>
+          </Box>
+        </Box>
+  
+  
       </WidgetWrapper>
     );
   };
