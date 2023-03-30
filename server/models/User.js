@@ -54,6 +54,30 @@ const UserSchema = new mongoose.Schema(
           },
           required: true,
         },
+        countryVisited: [
+          {
+            id: {
+              type: String,
+              required: true,
+            },
+            name: {
+              type: String,
+              required: true,
+            },
+            coordinates: {
+              type: [Number],
+              required: true,
+            },
+            code: {
+              type: String,
+              required: true,
+            },
+            count: {
+              type: Number,
+              default: 0,
+            },
+          },
+        ],
         viewedProfile: Number,
         impressions: Number,
     }, { timestamps: true }

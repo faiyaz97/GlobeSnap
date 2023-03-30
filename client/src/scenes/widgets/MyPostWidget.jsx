@@ -25,7 +25,7 @@ import {
   import WidgetWrapper from "components/WidgetWrapper";
   import { useState } from "react";
   import { useDispatch, useSelector } from "react-redux";
-  import { setPosts } from "state";
+  import { setPosts, setUser  } from "state";
   import countries from 'data/countries.json';
   
   const MyPostWidget = ({ picturePath }) => {
@@ -63,8 +63,9 @@ import {
         headers: { Authorization: `Bearer ${token}` },
         body: formData,
       });
-      const posts = await response.json();
+      const { posts, updatedUser } = await response.json();
       dispatch(setPosts({ posts }));
+      dispatch(setUser({ user: updatedUser }));
       setImage(null);
       setImageUrl(null)
       setPost("");

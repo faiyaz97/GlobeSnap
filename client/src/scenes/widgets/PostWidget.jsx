@@ -11,7 +11,7 @@ import Friend from "components/Friend";
 import WidgetWrapper from "components/WidgetWrapper";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setPost, setPosts } from "state";
+import { setPost, setPosts, setLogin } from "state";
 import MoreOptionsDialog from "components/MoreOptionsDialog";
 
 const PostWidget = ({
@@ -48,9 +48,12 @@ const PostWidget = ({
       });
   
       if (response.ok) {
-        const posts = await response.json();
+        const { posts, user } = await response.json();
+
         // Update your posts state with the updatedPosts
         dispatch(setPosts({ posts }));
+        // Update the user state with the updated user object
+        dispatch(setLogin({ user, token }));
         console.log('Post deleted successfully');
       } else {
         console.error('Failed to delete the post');
