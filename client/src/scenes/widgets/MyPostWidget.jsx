@@ -107,7 +107,7 @@ import {
         {isImage && (
           <Box mb="1.5rem">
             <Dropzone
-              acceptedFiles=".jpg,.jpeg,.png"
+              acceptedFiles={["image/*"]}
               multiple={false}
               onDrop={(acceptedFiles) => {
                 setImage(acceptedFiles[0]);
@@ -139,7 +139,7 @@ import {
                       "&:hover": { cursor: "pointer" }  
                     }}
                   >
-                    <input {...getInputProps()} />
+                    <input {...getInputProps()} accept="image/*" />
                     {!imageUrl  ? (
                             <Typography>
                             Add Picture

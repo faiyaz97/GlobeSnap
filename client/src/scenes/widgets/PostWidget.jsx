@@ -139,97 +139,114 @@ const PostWidget = ({
 
   return (
     <WidgetWrapper m="2rem 0">
+      
       <FlexBetween sx={{ alignItems: "flex-start" }}>
-          <Box sx={{ display: "flex", alignItems: "top", gap:"1rem" }}>
-            <UserImage image={userPicturePath} size="50px" />
-            <Box>
-              <Box style={{ display: "flex", alignItems: "center", }}>
-                <Typography
-                  color={main}
-                  variant="h5"
-                  fontWeight="800"
-                  sx={{
-                    "&:hover": {
+        <Box sx={{ display: "flex", alignItems: "top" }}>
+          <UserImage image={userPicturePath} size="50px" />
+          <Box sx={{marginLeft: "1rem"}}>
+            <Box sx={{ display: "flex", alignItems: "center",}}>
+              <Typography
+              
+                color={main}
+                variant="h5"
+                fontWeight="800"
+                sx={{
+                  "&:hover": {
+                    color: palette.primary.dark,
+                    cursor: "pointer",
+                    
+                  },
+                }}
+                onClick={() => {
+                  navigate(`/profile/${postUserId}`);
+                  navigate(0);
+                }}
+              >
+                {name}
+              </Typography>
+            </Box>
+            <Typography color={medium} fontSize="0.75rem">
+              {dateTimeAgo}
+            </Typography>
+          </Box>
+          <Box sx={{ display: "flex"}}>
+            {postUserId !== _id && (
+                <>
+                  <span style={{margin:".0rem .5rem .0rem .5rem"}}>•</span>
+                  <Typography
+                    onClick={() => patchFriend()}
+                    variant="h6"
+                    sx={{
+                      display: "flex",
+                      alignItems: "top",
+                      fontWeight: "300",
                       color: palette.primary.dark,
                       cursor: "pointer",
-                    },
-                  }}
-                  onClick={() => {
-                    navigate(`/profile/${postUserId}`);
-                    navigate(0);
-                  }}
-                >
-                  {name}
-                </Typography>
-                {postUserId !== _id && (
-                  <>
-                    <span style={{marginLeft:"1rem"}}>•</span>
-                    <Typography
-                      onClick={() => patchFriend()}
-                      variant="h6"
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        fontWeight: "300",
-                        color: palette.primary.dark,
-                        cursor: "pointer",
-                        textTransform: "none",
-                        marginLeft: "1rem",
-                        "&:hover": {
-                          color: medium,
-                        },
-                      }}
-                    >
-                      {isFriend ? "Unfollow" : "Follow"}
-                    </Typography>
-                  </>
-                  
-                )}
-              </Box>
-              <Typography color={medium} fontSize="0.75rem">
-                {dateTimeAgo}
-              </Typography>
+                      textTransform: "none",
+                      "&:hover": {
+                        color: medium,
+                      },
+                    }}
+                  >
+                    {isFriend ? "Unfollow" : "Follow"}
+                  </Typography>
+                </>
+                
+              )}
             </Box>
 
+        </Box>
+        <Tooltip title={location.name} TransitionComponent={Zoom}>
+          <Box sx={{ display: "flex", alignItems: "center", marginLeft: "1rem" }}>
+          <Typography variant="h6" sx={{ marginRight: "0.5rem" }}>
+              {location.id}
+            </Typography>
+            <img
+              src={`https://flagcdn.com/w20/${location.code.toLowerCase()}.png`}
+              srcSet={`https://flagcdn.com/w40/${location.code.toLowerCase()}.png 2x`}
+              alt={location.name}
+            />
+            
           </Box>
-          <Tooltip title={location.name} TransitionComponent={Zoom}>
-            <Box sx={{ display: "flex", alignItems: "center", marginLeft: "1rem" }}>
-            <Typography variant="h6" sx={{ marginRight: "0.5rem" }}>
-                {location.id}
-              </Typography>
-              <img
-                src={`https://flagcdn.com/w20/${location.code.toLowerCase()}.png`}
-                srcSet={`https://flagcdn.com/w40/${location.code.toLowerCase()}.png 2x`}
-                alt={location.name}
-              />
-              
-            </Box>
 
-          </Tooltip>
-          
-        </FlexBetween>
+        </Tooltip>
+        
+      </FlexBetween>
 
-
-
-
-      <Typography color={main} sx={{ mt: "1rem" }}>
-        {description}
-      </Typography>
-      {picturePath && (
-        <img
-          width="100%"
-          height="auto"
-          alt="post"
-          style={{ borderRadius: "0.75rem", marginTop: "0.75rem" }}
-          src={`http://localhost:3001/assets/${picturePath}`}
+      <Divider sx={{m:"1rem 0rem 1rem 0rem"}}/>
+      
+      <Box>
+        <Typography
+          color={main}
+          sx={{ mb: "1rem" }}
+          component="div"
+          dangerouslySetInnerHTML={{
+            __html: description.replace(/\n/g, '<br />'),
+          }}
         />
-      )}
-      <FlexBetween mt="0.25rem">
+        {picturePath && (
+          <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            sx={{ mt: "0.75rem" }}
+          >
+            <img
+              alt="post"
+              style={{ borderRadius: "0.75rem", width: '100%',
+              maxWidth: '100%', }}
+              src={`http://localhost:3001/assets/${picturePath}`}
+            />
+          </Box>
+        )}
+      </Box>
+      
+      <FlexBetween mt="1rem" >
         <FlexBetween gap="1rem">
           <FlexBetween gap="0.3rem">
-            <IconButton onClick={patchLike}>
+            <IconButton onClick={patchLike} sx={{ padding: '0' }}>
               {isLiked ? (
-                <FavoriteOutlined sx={{ color: primary }} />
+                <FavoriteOutlined sx={{ color: primary}} />
               ) : (
                 <FavoriteBorderOutlined />
               )}
@@ -238,7 +255,7 @@ const PostWidget = ({
           </FlexBetween>
 
           <FlexBetween gap="0.3rem">
-            <IconButton onClick={() => setIsComments(!isComments)}>
+            <IconButton onClick={() => setIsComments(!isComments)} sx={{ padding: '0' }}>
               <ChatBubbleOutlineOutlined />
             </IconButton>
             <Typography>{comments.length}</Typography>
@@ -246,7 +263,7 @@ const PostWidget = ({
         </FlexBetween>
 
         {postUserId === loggedInUserId ? (
-          <IconButton onClick={handleMoreHorizClick}>
+          <IconButton onClick={handleMoreHorizClick} sx={{ padding: '0' }}>
             <MoreHoriz />
           </IconButton>
 
