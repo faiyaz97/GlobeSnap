@@ -7,7 +7,7 @@ import {
   PersonAddOutlined,
   PersonRemoveOutlined,
 } from "@mui/icons-material";
-import { Box, Divider, IconButton, Typography, useTheme, Button } from "@mui/material";
+import { Box, Divider, IconButton, Typography, useTheme, Tooltip, Zoom  } from "@mui/material";
 import FlexBetween from "components/FlexBetween";
 import Friend from "components/Friend";
 import WidgetWrapper from "components/WidgetWrapper";
@@ -171,18 +171,21 @@ const PostWidget = ({
             </Box>
 
           </Box>
+          <Tooltip title={location.name} TransitionComponent={Zoom}>
+            <Box sx={{ display: "flex", alignItems: "center", marginLeft: "1rem" }}>
+            <Typography variant="h6" sx={{ marginRight: "0.5rem" }}>
+                {location.id}
+              </Typography>
+              <img
+                src={`https://flagcdn.com/w20/${location.code.toLowerCase()}.png`}
+                srcSet={`https://flagcdn.com/w40/${location.code.toLowerCase()}.png 2x`}
+                alt={location.name}
+              />
+              
+            </Box>
+
+          </Tooltip>
           
-          <Box sx={{ display: "flex", alignItems: "center", marginLeft: "1rem" }}>
-          <Typography variant="h6" sx={{ marginRight: "0.5rem" }}>
-              {location.id}
-            </Typography>
-            <img
-              src={`https://flagcdn.com/w20/${location.code.toLowerCase()}.png`}
-              srcSet={`https://flagcdn.com/w40/${location.code.toLowerCase()}.png 2x`}
-              alt={location.name}
-            />
-            
-          </Box>
         </FlexBetween>
 
 
