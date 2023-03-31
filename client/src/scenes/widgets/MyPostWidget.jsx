@@ -27,6 +27,8 @@ import {
   import { useDispatch, useSelector } from "react-redux";
   import { setPosts, setUser  } from "state";
   import countries from 'data/countries.json';
+  import { ToastContainer, toast } from 'react-toastify';
+  import 'react-toastify/dist/ReactToastify.css';
   
   const MyPostWidget = ({ picturePath }) => {
     const isNonMobile = useMediaQuery("(min-width:600px)");
@@ -63,13 +65,40 @@ import {
         headers: { Authorization: `Bearer ${token}` },
         body: formData,
       });
-      const { posts, updatedUser } = await response.json();
-      dispatch(setPosts({ posts }));
-      dispatch(setUser({ user: updatedUser }));
-      setImage(null);
-      setImageUrl(null)
-      setPost("");
-      setSelectedCountry(null);
+
+
+       if (response.ok) {
+        const { posts, updatedUser } = await response.json();
+        dispatch(setPosts({ posts }));
+        dispatch(setUser({ user: updatedUser }));
+        setImage(null);
+        setImageUrl(null);
+        setPost("");
+        setSelectedCountry(null);
+
+        toast.success('Post created successfully!', {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: false,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          });
+
+      } else {
+        toast.error('Post not created. Try again later.', {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: false,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      }
 
     };
   
@@ -94,15 +123,10 @@ import {
                         setImage(null)
                         setImageUrl(null)
                       }}
-                      sx={{mr: "40px"}}
                     >
                       <DeleteOutlined />
                     </IconButton>
-                  ) : (
-                    <FlexBetween sx={{mr: "74px"}}>
-                    </FlexBetween>
-                    
-                  )}
+                  ) : (<></>)}
                   <Box
                     {...getRootProps()}
                     border={`2px dashed ${palette.primary.main}`}
@@ -134,8 +158,7 @@ import {
         
 
       
-        <FlexBetween gap="1.5rem">
-          <UserImage image={picturePath} />
+        <FlexBetween >
           <InputBase
             placeholder="What's on your mind..."
             onChange={(e) => setPost(e.target.value)}
@@ -152,32 +175,26 @@ import {
 
         </FlexBetween>
 
-        
-
         <Box
           sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            pl: "74px",
-            pt: "1rem"
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'flex-end',
+            mt: "1rem",
+            gap:"1rem"
           }}
         >
-          <FlexBetween
-            
-            sx={{ gap: "1.5rem" }}
-          >
-
+          <Box sx={{ flexGrow: 1, mr: "0" }}>
             <Autocomplete
-            sx={{
-              backgroundColor: palette.neutral.light, // Add any style you want here
-              '& .MuiOutlinedInput-root': {
-                borderRadius: "100px",
-                width:"12rem",
-                '& .MuiOutlinedInput-notchedOutline': {
-                  border: 'none',
+              sx={{
+                width: "100%",
+                backgroundColor: palette.neutral.light, // Add any style you want here
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: "100px",
+                  '& .MuiOutlinedInput-notchedOutline': {
+                    border: 'none',
+                  },
                 },
-              },
             }}
               options={countries}
               getOptionLabel={(option) => option.name}
@@ -200,7 +217,8 @@ import {
               renderInput={(params) => (
                 <TextField
                   {...params}
-                  label= "Country"
+                  label= "Post location"
+                  
                   InputProps={{
                     ...params.InputProps,
                     startAdornment: selectedCountry ? (
@@ -210,8 +228,8 @@ import {
                 />
               )}
             />
-
-
+          </Box>
+          <Box>
             <AddPhotoAlternateOutlined 
               sx={{ fontSize: '2rem', color: mediumMain, "&:hover": { cursor: "pointer", color: medium } }} 
               onClick={() => {
@@ -221,29 +239,39 @@ import {
                   setImageUrl(null)
                 }
               }}
-              
-              />
-          </FlexBetween>
-
-        
-          <Box sx={{ display: "flex", alignItems: "center" }}>
+            />
+          </Box>
+          <Box>
             <Button
-              disabled={!post || !selectedCountry}
-              onClick={handlePost}
-              sx={{
-                color: palette.background.alt,
-                backgroundColor: palette.primary.main,
-                borderRadius: "3rem",
-                marginLeft: "1rem",
-              }}
-            >
-              POST
+                disabled={!post || !selectedCountry}
+                onClick={handlePost}
+                sx={{
+                  color: palette.background.alt,
+                  backgroundColor: palette.primary.main,
+                  borderRadius: "3rem",
+                }}
+              >
+                POST
             </Button>
           </Box>
         </Box>
-  
+
+        <ToastContainer
+          position="bottom-center"
+          autoClose={3000}
+          hideProgressBar
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover={false}
+          theme="light"
+          />
   
       </WidgetWrapper>
+
+      
     );
   };
   

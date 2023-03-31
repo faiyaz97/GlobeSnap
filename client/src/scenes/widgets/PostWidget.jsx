@@ -18,6 +18,8 @@ import MoreOptionsDialog from "components/MoreOptionsDialog";
 import UserImage from "components/UserImage";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 
@@ -70,9 +72,28 @@ const PostWidget = ({
         dispatch(setPosts({ posts }));
         // Update the user state with the updated user object
         dispatch(setLogin({ user, token }));
-        console.log('Post deleted successfully');
+        
+        toast.success('Post deleted successfully!', {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: false,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          });
       } else {
-        console.error('Failed to delete the post');
+        toast.error('Failed to delete the post. Try again later.', {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: false,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
       }
     } catch (error) {
       console.error('Error while deleting the post:', error);
@@ -252,6 +273,7 @@ const PostWidget = ({
         postId={postId}
         onDeletePost={deletePost}
       />
+
 
 
     </WidgetWrapper>
