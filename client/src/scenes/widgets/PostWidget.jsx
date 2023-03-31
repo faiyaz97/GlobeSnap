@@ -4,15 +4,22 @@ import {
   FavoriteOutlined,
   ShareOutlined,
   MoreHoriz,
+  PersonAddOutlined,
+  PersonRemoveOutlined,
 } from "@mui/icons-material";
-import { Box, Divider, IconButton, Typography, useTheme } from "@mui/material";
+import { Box, Divider, IconButton, Typography, useTheme, Button } from "@mui/material";
 import FlexBetween from "components/FlexBetween";
 import Friend from "components/Friend";
 import WidgetWrapper from "components/WidgetWrapper";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setPost, setPosts, setLogin } from "state";
+import { setPost, setPosts, setLogin, setFriends } from "state";
 import MoreOptionsDialog from "components/MoreOptionsDialog";
+import UserImage from "components/UserImage";
+import { useNavigate } from "react-router-dom";
+import moment from "moment";
+
+
 
 const PostWidget = ({
   postId,
@@ -24,18 +31,27 @@ const PostWidget = ({
   userPicturePath,
   likes,
   comments,
+  createdAt
 }) => {
+  const dateTimeAgo = moment(new Date(createdAt)).fromNow();
+  const navigate = useNavigate();
+  const friends = useSelector((state) => state.user.friends);
+  const isFriend = friends.find((friend) => friend._id === postUserId);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [isComments, setIsComments] = useState(false);
   const dispatch = useDispatch();
   const token = useSelector((state) => state.token);
   const loggedInUserId = useSelector((state) => state.user._id);
+  const { _id } = useSelector((state) => state.user);
   const isLiked = Boolean(likes[loggedInUserId]);
   const likeCount = Object.keys(likes).length;
 
   const { palette } = useTheme();
   const main = palette.neutral.main;
   const primary = palette.primary.main;
+  const primaryLight = palette.primary.light;
+  const primaryDark = palette.primary.dark;
+  const medium = palette.neutral.medium;
 
   const deletePost = async (postId) => {
     try {
@@ -84,14 +100,94 @@ const PostWidget = ({
     setDialogOpen(true);
   };
 
+
+  const patchFriend = async () => {
+    const response = await fetch(
+      `http://localhost:3001/users/${_id}/${postUserId}`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const data = await response.json();
+    dispatch(setFriends({ friends: data }));
+  };
+
   return (
     <WidgetWrapper m="2rem 0">
-      <Friend
-        friendId={postUserId}
-        name={name}
-        subtitle={location.name}
-        userPicturePath={userPicturePath}
-      />
+      <FlexBetween sx={{ alignItems: "flex-start" }}>
+          <Box sx={{ display: "flex", alignItems: "top", gap:"1rem" }}>
+            <UserImage image={userPicturePath} size="50px" />
+            <Box>
+              <Box style={{ display: "flex", alignItems: "center", }}>
+                <Typography
+                  color={main}
+                  variant="h5"
+                  fontWeight="800"
+                  sx={{
+                    "&:hover": {
+                      color: palette.primary.dark,
+                      cursor: "pointer",
+                    },
+                  }}
+                  onClick={() => {
+                    navigate(`/profile/${postUserId}`);
+                    navigate(0);
+                  }}
+                >
+                  {name}
+                </Typography>
+                {postUserId !== _id && (
+                  <>
+                    <span style={{marginLeft:"1rem"}}>•</span>
+                    <Typography
+                      onClick={() => patchFriend()}
+                      variant="h6"
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        fontWeight: "300",
+                        color: palette.primary.dark,
+                        cursor: "pointer",
+                        textTransform: "none",
+                        marginLeft: "1rem",
+                        "&:hover": {
+                          color: medium,
+                        },
+                      }}
+                    >
+                      {isFriend ? "Unfollow" : "Follow"}
+                    </Typography>
+                  </>
+                  
+                )}
+              </Box>
+              <Typography color={medium} fontSize="0.75rem">
+                {dateTimeAgo}
+              </Typography>
+            </Box>
+
+          </Box>
+          
+          <Box sx={{ display: "flex", alignItems: "center", marginLeft: "1rem" }}>
+          <Typography variant="h6" sx={{ marginRight: "0.5rem" }}>
+              {location.id}
+            </Typography>
+            <img
+              src={`https://flagcdn.com/w20/${location.code.toLowerCase()}.png`}
+              srcSet={`https://flagcdn.com/w40/${location.code.toLowerCase()}.png 2x`}
+              alt={location.name}
+            />
+            
+          </Box>
+        </FlexBetween>
+
+
+
+
       <Typography color={main} sx={{ mt: "1rem" }}>
         {description}
       </Typography>
