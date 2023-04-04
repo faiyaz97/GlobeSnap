@@ -11,6 +11,18 @@ const FriendListWidget = ({ userId }) => {
   const token = useSelector((state) => state.token);
   const friends = useSelector((state) => state.user.friends);
 
+  const getFollowing = async () => {
+    const response = await fetch(
+      `http://localhost:3001/users/${userId}/following`,
+      {
+        method: "GET",
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    const data = await response.json();
+    dispatch(setFriends({ friends: data }));
+  };
+
   const getFriends = async () => {
     const response = await fetch(
       `http://localhost:3001/users/${userId}/friends`,
@@ -24,7 +36,7 @@ const FriendListWidget = ({ userId }) => {
   };
 
   useEffect(() => {
-    getFriends();
+    getFollowing();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
@@ -35,18 +47,22 @@ const FriendListWidget = ({ userId }) => {
         fontWeight="500"
         sx={{ mb: "1.5rem" }}
       >
-        Friend List
+        Following
       </Typography>
-      <Box display="flex" flexDirection="column" gap="1.5rem">
-        {friends.map((friend) => (
-          <Friend
-            key={friend._id}
-            friendId={friend._id}
-            name={`${friend.firstName} ${friend.lastName}`}
-            userPicturePath={friend.picturePath}
-          />
-        ))}
-      </Box>
+      {friends.length > 0 ? (
+        <Box display="flex" flexDirection="column" gap="1.5rem">
+          {friends.map((friend) => (
+            <Friend
+              key={friend._id}
+              friendId={friend._id}
+              name={`${friend.firstName} ${friend.lastName}`}
+              userPicturePath={friend.picturePath}
+            />
+          ))}
+        </Box>
+      ) : (
+        <Typography varaint="body1">Non fai follow a nessuno sega</Typography>
+      )}
     </WidgetWrapper>
   );
 };

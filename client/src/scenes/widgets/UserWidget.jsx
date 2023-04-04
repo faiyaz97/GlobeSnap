@@ -108,13 +108,13 @@ const UserWidget = ({ userId, picturePath }) => {
         <Box>
           <Typography variant="h6">Followers</Typography>
           <Typography variant="body1" color={main} sx={{ textAlign: "center" }}>
-            777
+            {user.followers.length}
           </Typography>
         </Box>
         <Box>
           <Typography variant="h6">Following</Typography>
           <Typography variant="body1" color={main} sx={{ textAlign: "center" }}>
-            2
+            {user.following.length}
           </Typography>
         </Box>
       </Box>

@@ -30,7 +30,58 @@ export const getUserFriends = async (req, res) => {
   }
 };
 
+export const getUserFollowing = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await User.findById(id);
+
+    const following = await Promise.all(
+      user.following.map((id) => User.findById(id))
+    );
+    const formattedFollowing = following.map(
+      ({ _id, firstName, lastName, location, picturePath }) => {
+        return { _id, firstName, lastName, location, picturePath };
+      }
+    );
+    res.status(200).json(formattedFollowing);
+  } catch (err) {
+    res.status(404).json({ message: err.message });
+  }
+};
+
 /* UPDATE */
+
+export const followUnfollowUser = async (req, res) => {
+  try {
+    const { id, followId } = req.params;
+    const user = await User.findById(id);
+    const targetUser = await User.findById(followId);
+
+    if (user.following.includes(followId)) {
+      user.following = user.following.filter((id) => id !== followId);
+      targetUser.followers = targetUser.followers.filter((id) => id !== id);
+    } else {
+      user.following.push(followId);
+      targetUser.followers.push(id);
+    }
+    await user.save();
+    await targetUser.save();
+
+    const following = await Promise.all(
+      user.following.map((id) => User.findById(id))
+    );
+    const formattedFollowing = following.map(
+      ({ _id, firstName, lastName, location, picturePath }) => {
+        return { _id, firstName, lastName, location, picturePath };
+      }
+    );
+
+    res.status(200).json(formattedFollowing);
+  } catch (err) {
+    res.status(404).json({ message: err.message });
+  }
+};
+
 export const addRemoveFriend = async (req, res) => {
   try {
     const { id, friendId } = req.params;
