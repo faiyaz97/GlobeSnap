@@ -17,7 +17,7 @@ export const createPost = async (req, res) => {
       userPicturePath: user.picturePath,
       picturePath,
       likes: {},
-      comments: []
+      comments: [],
     });
     await newPost.save();
 
@@ -74,8 +74,6 @@ export const deletePost = async (req, res) => {
   }
 };
 
-
-
 /* READ */
 export const getFeedPosts = async (req, res) => {
   try {
@@ -122,5 +120,43 @@ export const likePost = async (req, res) => {
   }
 };
 
+// Add these functions to the post controller
+export const addComment = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { userId, text } = req.body;
+    const timestamp = Date.now();
 
-export default { createPost, deletePost, getFeedPosts, getUserPosts, likePost };
+    const post = await Post.findById(id);
+    post.comments.push({ userId, text, timestamp });
+    const updatedPost = await post.save();
+
+    res.status(200).json(updatedPost);
+  } catch (err) {
+    res.status(404).json({ message: err.message });
+  }
+};
+
+export const deleteComment = async (req, res) => {
+  try {
+    const { id, commentId } = req.params;
+
+    const post = await Post.findById(id);
+    post.comments.id(commentId).remove();
+    const updatedPost = await post.save();
+
+    res.status(200).json(updatedPost);
+  } catch (err) {
+    res.status(404).json({ message: err.message });
+  }
+};
+
+export default {
+  createPost,
+  deletePost,
+  getFeedPosts,
+  getUserPosts,
+  likePost,
+  addComment,
+  deleteComment,
+};

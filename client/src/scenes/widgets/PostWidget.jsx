@@ -28,6 +28,8 @@ import { useNavigate } from "react-router-dom";
 import moment from "moment";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import AddCommentForm from "components/AddCommentForm";
+import Comment from "components/Comment";
 
 const PostWidget = ({
   postId,
@@ -41,6 +43,7 @@ const PostWidget = ({
   comments,
   createdAt,
 }) => {
+  const [newComment, setNewComment] = useState("");
   const dateTimeAgo = moment(new Date(createdAt)).fromNow();
   const navigate = useNavigate();
   const friends = useSelector((state) => state.user.friends);
@@ -60,6 +63,19 @@ const PostWidget = ({
   const primaryLight = palette.primary.light;
   const primaryDark = palette.primary.dark;
   const medium = palette.neutral.medium;
+
+  const handleCommentSubmit = async () => {
+    await fetch(`http://localhost:3001/posts/${postId}/comment`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ userId: loggedInUserId, text: newComment }),
+    });
+
+    setNewComment("");
+  };
 
   const deletePost = async (postId) => {
     try {
@@ -295,12 +311,15 @@ const PostWidget = ({
           {comments.map((comment, i) => (
             <Box key={`${name}-${i}`}>
               <Divider />
-              <Typography sx={{ color: main, m: "0.5rem 0", pl: "1rem" }}>
-                {comment}
-              </Typography>
+              <Comment comment={comment} postId={postId} />
             </Box>
           ))}
           <Divider />
+          <AddCommentForm
+            newComment={newComment}
+            setNewComment={setNewComment}
+            onSubmit={handleCommentSubmit}
+          />
         </Box>
       )}
       <MoreOptionsDialog
