@@ -65,16 +65,25 @@ const PostWidget = ({
   const medium = palette.neutral.medium;
 
   const handleCommentSubmit = async () => {
-    await fetch(`http://localhost:3001/posts/${postId}/comment`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ userId: loggedInUserId, text: newComment }),
-    });
+    const response = await fetch(
+      `http://localhost:3001/posts/${postId}/comment`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId: loggedInUserId, text: newComment }),
+      }
+    );
 
-    setNewComment("");
+    if (response.ok) {
+      const updatedPost = await response.json();
+      dispatch(setPost({ post: updatedPost }));
+      setNewComment("");
+    } else {
+      // Handle error here
+    }
   };
 
   const deletePost = async (postId) => {
@@ -181,7 +190,6 @@ const PostWidget = ({
           <Box sx={{ marginLeft: "1rem" }}>
             <Box sx={{ display: "flex", alignItems: "center" }}>
               <Typography
-                color={main}
                 variant="h5"
                 fontWeight="800"
                 sx={{
@@ -243,11 +251,12 @@ const PostWidget = ({
         </Tooltip>
       </FlexBetween>
 
-      <Divider sx={{ m: "1rem 0rem 1rem 0rem" }} />
+      {picturePath ? <Divider sx={{ mt: "1rem" }} /> : <></>}
 
-      <Box>
+      <Box sx={{ mt: "1rem" }}>
         <Typography
           color={main}
+          variant={picturePath ? "body1" : "h3"}
           sx={{ mb: "1rem" }}
           component="div"
           dangerouslySetInnerHTML={{
@@ -308,13 +317,13 @@ const PostWidget = ({
       </FlexBetween>
       {isComments && (
         <Box mt="0.5rem">
+          <Divider sx={{ m: "1rem 0" }} />
           {comments.map((comment, i) => (
             <Box key={`${name}-${i}`}>
-              <Divider />
               <Comment comment={comment} postId={postId} />
             </Box>
           ))}
-          <Divider />
+
           <AddCommentForm
             newComment={newComment}
             setNewComment={setNewComment}
