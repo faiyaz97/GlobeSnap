@@ -1,4 +1,4 @@
-import { Box, IconButton, Typography, useTheme } from "@mui/material";
+import { Box, IconButton, Typography, useTheme, Button } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useDispatch, useSelector } from "react-redux";
 import { deleteComment } from "state";
@@ -78,13 +78,29 @@ const Comment = ({ comment, postId }) => {
       </Box>
       <Box marginLeft="auto">
         {loggedInUserId === userId && (
-          <IconButton
+          <Button
             size="small"
             onClick={handleDeleteComment}
             aria-label="delete"
+            sx={{
+              textTransform: "none",
+              "&:hover": {
+                backgroundColor: "transparent",
+              },
+            }}
           >
-            <DeleteIcon />
-          </IconButton>
+            <Typography
+              variant="caption"
+              color={main}
+              sx={{
+                "&:hover": {
+                  color: "red",
+                },
+              }}
+            >
+              Delete
+            </Typography>
+          </Button>
         )}
       </Box>
     </Box>

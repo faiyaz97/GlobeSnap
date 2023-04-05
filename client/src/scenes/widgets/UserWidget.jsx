@@ -16,6 +16,8 @@ import { useNavigate } from "react-router-dom";
 
 const UserWidget = ({ userId, picturePath }) => {
   const [user, setUser] = useState(null);
+  const [postCount, setPostCount] = useState(null);
+
   const { palette } = useTheme();
   const navigate = useNavigate();
   const token = useSelector((state) => state.token);
@@ -32,8 +34,22 @@ const UserWidget = ({ userId, picturePath }) => {
     setUser(data);
   };
 
+  const getUserPosts = async () => {
+    const response = await fetch(
+      `http://localhost:3001/posts/${userId}/posts`,
+      {
+        method: "GET",
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    const data = await response.json();
+    setPostCount(data.length);
+    console.log(data.length);
+  };
+
   useEffect(() => {
     getUser();
+    getUserPosts();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!user) {
@@ -101,7 +117,7 @@ const UserWidget = ({ userId, picturePath }) => {
         <Box>
           <Typography variant="h6">Posts</Typography>
           <Typography variant="body1" color={main} sx={{ textAlign: "center" }}>
-            22
+            {postCount}
           </Typography>
         </Box>
 
