@@ -38,7 +38,7 @@ const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
   return (
     <FlexBetween>
       <FlexBetween gap="1rem">
-        <UserImage image={userPicturePath} size="50px" />
+        <UserImage image={userPicturePath} size="30px" />
         <Box
           onClick={() => {
             navigate(`/profile/${friendId}`);
@@ -64,18 +64,19 @@ const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
         </Box>
       </FlexBetween>
       {friendId !== _id ? (
-        <Button
+        <Typography
           onClick={() => patchFriend()}
+          variant="body1"
           sx={{
-            backgroundColor: primaryLight,
-            p: "0.6rem",
             color: primaryDark,
-            textTransform: "none",
-            fontWeight: 500,
+            "&:hover": {
+              color: palette.primary.light,
+              cursor: "pointer",
+            },
           }}
         >
           {isFriend ? "Unfollow" : "Follow"}
-        </Button>
+        </Typography>
       ) : (
         <></>
       )}

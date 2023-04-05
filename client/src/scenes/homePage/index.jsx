@@ -13,7 +13,7 @@ const HomePage = () => {
 
   return (
     <Box>
-      <Navbar />  
+      <Navbar />
       <Box
         width="100%"
         padding="2rem 6%"
@@ -29,13 +29,13 @@ const HomePage = () => {
           mt={isNonMobileScreens ? undefined : "2rem"}
         >
           <MyPostWidget picturePath={picturePath} />
-          <Divider sx={{mt:"2rem"}}/>
+          <Divider sx={{ mt: "2rem" }} />
           <PostsWidget userId={_id} />
         </Box>
         {isNonMobileScreens && (
           <Box flexBasis="26%">
-            <AdvertWidget />
-            <Box m="2rem 0" />
+            {/* <AdvertWidget />
+            <Box m="2rem 0" /> */}
             <FriendListWidget userId={_id} />
           </Box>
         )}

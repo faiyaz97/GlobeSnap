@@ -1,4 +1,5 @@
 import { Box, useMediaQuery } from "@mui/material";
+import MapChart from "components/MapChart";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
@@ -32,9 +33,23 @@ const ProfilePage = () => {
   return (
     <Box>
       <Navbar />
+      <Box display="flex" justifyContent="center">
+        <Box
+          width={isNonMobileScreens ? "68%" : "100%"}
+          padding={isNonMobileScreens ? "2rem 3%" : "2rem 6%"}
+        >
+          <Box>
+            <UserWidget userId={userId} picturePath={user.picturePath} />
+          </Box>
+          <Box paddingTop="2rem">
+            <MapChart user={user} />
+          </Box>
+        </Box>
+      </Box>
+
       <Box
         width="100%"
-        padding="2rem 6%"
+        padding="0 6%"
         display={isNonMobileScreens ? "flex" : "block"}
         gap="2rem"
         justifyContent="center"
@@ -49,6 +64,7 @@ const ProfilePage = () => {
           mt={isNonMobileScreens ? undefined : "2rem"}
         >
           <MyPostWidget picturePath={user.picturePath} />
+
           <Box m="2rem 0" />
           <PostsWidget userId={userId} isProfile />
         </Box>
