@@ -10,6 +10,7 @@ import {
 } from "react-simple-maps";
 import { useTheme, Tooltip } from "@mui/material";
 import ColorHash from "color-hash";
+import { useState } from "react";
 
 const MapChart = ({ user }) => {
   const countryVisited = user.countryVisited;
@@ -26,13 +27,29 @@ const MapChart = ({ user }) => {
   const primaryLight = theme.palette.primary.light;
   const primaryMain = theme.palette.primary.main;
   const alt = theme.palette.background.alt;
+
+  const [position, setPosition] = useState({ coordinates: [0, 0], zoom: 1 });
+  function handleMoveEnd(position) {
+    if (position.zoom <= 1) {
+      setPosition({ coordinates: [0, 0], zoom: 1 });
+    }
+  }
+  function handleMoveStart(position) {
+    setPosition(position);
+  }
+
   return (
     <ComposableMap
       viewBox="0 0 800 400"
       height={400}
       projectionConfig={{ scale: 147 }}
     >
-      <ZoomableGroup>
+      <ZoomableGroup
+        zoom={position.zoom}
+        center={position.coordinates}
+        onMoveEnd={handleMoveEnd}
+        onMoveStart={handleMoveStart}
+      >
         <Graticule stroke={primaryLight} />
         <Geographies geography={geoUrl}>
           {({ geographies }) =>
