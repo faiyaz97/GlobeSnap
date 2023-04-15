@@ -9,23 +9,35 @@ import {
   FormControl,
   useTheme,
   useMediaQuery,
+  Switch,
+  Menu,
+  Button,
 } from "@mui/material";
 import {
-  Search,
-  Message,
+  Chat,
   DarkMode,
   LightMode,
   Notifications,
   Help,
-  Menu,
   Close,
+  Search,
+  ExpandMore,
 } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
 import { setMode, setLogout } from "state";
 import { useNavigate } from "react-router-dom";
 import FlexBetween from "components/FlexBetween";
+import UserImage from "components/UserImage";
 
 const Navbar = () => {
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
   const [isMobileMenuToggled, setIsMobileMenuToggled] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -42,155 +54,137 @@ const Navbar = () => {
   const fullName = `${user.firstName} ${user.lastName}`;
 
   return (
-    <FlexBetween padding="1rem 6%" backgroundColor={alt}>
-      <FlexBetween gap="1.75rem">
-        <Typography
-          fontWeight="bold"
-          fontSize="clamp(1rem, 2rem, 2.25rem)"
-          color="primary"
-          onClick={() => navigate("/home")}
-          sx={{
-            "&:hover": {
-              color: primaryLight,
-              cursor: "pointer",
-            },
-          }}
-        >
-          Couple Journey
-        </Typography>
-        {isNonMobileScreens && (
-          <FlexBetween
-            backgroundColor={neutralLight}
-            borderRadius="9px"
-            gap="3rem"
-            padding="0.1rem 1.5rem"
-          >
-            <InputBase placeholder="Search..." />
-            <IconButton>
-              <Search />
-            </IconButton>
-          </FlexBetween>
-        )}
-      </FlexBetween>
-
+    <>
       {/* DESKTOP NAV */}
       {isNonMobileScreens ? (
-        <FlexBetween gap="2rem">
-          <IconButton onClick={() => dispatch(setMode())}>
-            {theme.palette.mode === "dark" ? (
-              <DarkMode sx={{ fontSize: "25px" }} />
-            ) : (
-              <LightMode sx={{ color: dark, fontSize: "25px" }} />
-            )}
-          </IconButton>
-          <Message sx={{ fontSize: "25px" }} />
-          <Notifications sx={{ fontSize: "25px" }} />
-          <Help sx={{ fontSize: "25px" }} />
-          <FormControl variant="standard" value={fullName}>
-            <Select
-              value={fullName}
+        <FlexBetween padding="1rem 6%" backgroundColor={alt}>
+          <Box display="flex" justifyContent="center" alignItems="center">
+            <Typography
+              fontWeight="bold"
+              fontSize="clamp(1rem, 2rem, 2.25rem)"
+              color="primary"
+              onClick={() => navigate("/home")}
               sx={{
-                backgroundColor: neutralLight,
-                width: "150px",
-                borderRadius: "0.25rem",
-                p: "0.25rem 1rem",
-                "& .MuiSvgIcon-root": {
-                  pr: "0.25rem",
-                  width: "3rem",
+                "&:hover": {
+                  color: primaryLight,
+                  cursor: "pointer",
                 },
-                "& .MuiSelect-select:focus": {
-                  backgroundColor: neutralLight,
-                },
+                padding: 0,
               }}
-              input={<InputBase />}
             >
-              <MenuItem value={fullName}>
-                <Typography>{fullName}</Typography>
-              </MenuItem>
-              <MenuItem onClick={() => dispatch(setLogout())}>Log Out</MenuItem>
-            </Select>
-          </FormControl>
+              Couple Journey
+            </Typography>
+          </Box>
+          <FlexBetween gap="2rem">
+            <Chat sx={{ fontSize: "25px" }} />
+            <Notifications sx={{ fontSize: "25px" }} />
+            <Search sx={{ fontSize: "25px" }} />
+            <Box>
+              <IconButton
+                id="basic-button"
+                aria-controls={open ? "basic-menu" : undefined}
+                aria-haspopup="true"
+                aria-expanded={open ? "true" : undefined}
+                onClick={handleClick}
+                disableRipple
+                style={{ fontSize: "14px" }}
+              >
+                {fullName} <ExpandMore />
+              </IconButton>
+              <Menu
+                id="basic-menu"
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleClose}
+              >
+                <MenuItem onClick={handleClose}>Settings</MenuItem>
+                <MenuItem>
+                  Theme
+                  <Switch
+                    checked={theme.palette.mode === "dark"}
+                    onChange={() =>
+                      dispatch(
+                        setMode(
+                          theme.palette.mode === "light" ? "dark" : "light"
+                        )
+                      )
+                    }
+                    icon={<LightMode />}
+                    checkedIcon={<DarkMode />}
+                    color="default"
+                    style={{
+                      color: dark,
+                    }}
+                  />
+                </MenuItem>
+                <MenuItem onClick={() => dispatch(setLogout())}>
+                  Logout
+                </MenuItem>
+              </Menu>
+            </Box>
+          </FlexBetween>
         </FlexBetween>
       ) : (
-        <IconButton
-          onClick={() => setIsMobileMenuToggled(!isMobileMenuToggled)}
-        >
-          <Menu />
-        </IconButton>
-      )}
-
-      {/* MOBILE NAV */}
-      {!isNonMobileScreens && isMobileMenuToggled && (
-        <Box
-          position="fixed"
-          right="0"
-          bottom="0"
-          height="100%"
-          zIndex="10"
-          maxWidth="500px"
-          minWidth="300px"
-          backgroundColor={background}
-        >
-          {/* CLOSE ICON */}
-          <Box display="flex" justifyContent="flex-end" p="1rem">
-            <IconButton
-              onClick={() => setIsMobileMenuToggled(!isMobileMenuToggled)}
-            >
-              <Close />
+        <>
+          {/* MOBILE NAV */}
+          <Box
+            sx={{
+              position: "fixed",
+              bottom: 0,
+              left: 0,
+              right: 0,
+              zIndex: 1000,
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              backgroundColor: alt,
+              padding: "1rem",
+            }}
+          >
+            <IconButton onClick={handleClick}>
+              <UserImage image={user.picturePath} size="25px" />
+            </IconButton>
+            <IconButton>
+              <Search sx={{ fontSize: "25px" }} />
+            </IconButton>
+            <IconButton>
+              <Notifications sx={{ fontSize: "25px" }} />
+            </IconButton>
+            <IconButton>
+              <Chat sx={{ fontSize: "25px" }} />
             </IconButton>
           </Box>
 
-          {/* MENU ITEMS */}
-          <FlexBetween
-            display="flex"
-            flexDirection="column"
-            justifyContent="center"
-            alignItems="center"
-            gap="3rem"
+          <Menu
+            id="basic-menu"
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleClose}
+            sx={{ position: "fixed", bottom: "4rem" }}
           >
-            <IconButton
-              onClick={() => dispatch(setMode())}
-              sx={{ fontSize: "25px" }}
-            >
-              {theme.palette.mode === "dark" ? (
-                <DarkMode sx={{ fontSize: "25px" }} />
-              ) : (
-                <LightMode sx={{ color: dark, fontSize: "25px" }} />
-              )}
-            </IconButton>
-            <Message sx={{ fontSize: "25px" }} />
-            <Notifications sx={{ fontSize: "25px" }} />
-            <Help sx={{ fontSize: "25px" }} />
-            <FormControl variant="standard" value={fullName}>
-              <Select
-                value={fullName}
-                sx={{
-                  backgroundColor: neutralLight,
-                  width: "150px",
-                  borderRadius: "0.25rem",
-                  p: "0.25rem 1rem",
-                  "& .MuiSvgIcon-root": {
-                    pr: "0.25rem",
-                    width: "3rem",
-                  },
-                  "& .MuiSelect-select:focus": {
-                    backgroundColor: neutralLight,
-                  },
+            <MenuItem onClick={handleClose}>Settings</MenuItem>
+            <MenuItem>
+              Theme
+              <Switch
+                checked={theme.palette.mode === "dark"}
+                onChange={() =>
+                  dispatch(
+                    setMode(theme.palette.mode === "light" ? "dark" : "light")
+                  )
+                }
+                icon={<LightMode />}
+                checkedIcon={<DarkMode />}
+                color="default"
+                style={{
+                  color: dark,
                 }}
-                input={<InputBase />}
-              >
-                <MenuItem value={fullName}>
-                  <Typography>{fullName}</Typography>
-                </MenuItem>
-                <MenuItem onClick={() => dispatch(setLogout())}>
-                  Log Out
-                </MenuItem>
-              </Select>
-            </FormControl>
-          </FlexBetween>
-        </Box>
+              />
+            </MenuItem>
+            <MenuItem onClick={() => dispatch(setLogout())}>Logout</MenuItem>
+          </Menu>
+        </>
       )}
-    </FlexBetween>
+    </>
   );
 };
 

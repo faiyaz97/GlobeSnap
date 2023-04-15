@@ -75,7 +75,7 @@ const UserWidget = ({ userId, picturePath }) => {
         <Box
           sx={{
             display: "flex",
-            flexDirection: "column", // Add this line
+            flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
             mt: "1rem",

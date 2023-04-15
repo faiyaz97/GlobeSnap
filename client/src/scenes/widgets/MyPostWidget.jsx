@@ -68,6 +68,7 @@ const MyPostWidget = ({ picturePath }) => {
       const { posts, updatedUser } = await response.json();
       dispatch(setPosts({ posts }));
       dispatch(setUser({ user: updatedUser }));
+
       setImage(null);
       setImageUrl(null);
       setPost("");

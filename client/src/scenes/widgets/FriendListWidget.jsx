@@ -61,7 +61,7 @@ const FriendListWidget = ({ userId }) => {
           ))}
         </Box>
       ) : (
-        <Typography varaint="body1">Non fai follow a nessuno sega</Typography>
+        <Typography varaint="body1">You don't follow anyone.</Typography>
       )}
     </WidgetWrapper>
   );
