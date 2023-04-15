@@ -21,7 +21,7 @@ import Friend from "components/Friend";
 import WidgetWrapper from "components/WidgetWrapper";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setPost, setPosts, setLogin, setFriends } from "state";
+import { setPost, setPosts, setLogin, setFriends, setFollowing } from "state";
 import MoreOptionsDialog from "components/MoreOptionsDialog";
 import UserImage from "components/UserImage";
 import { useNavigate } from "react-router-dom";
@@ -47,16 +47,17 @@ const PostWidget = ({
   const dateTimeAgo = moment(new Date(createdAt)).fromNow();
   const navigate = useNavigate();
   const friends = useSelector((state) => state.user.friends);
-  const isFriend = friends.find((friend) => friend._id === postUserId);
+  const following = useSelector((state) => state.user.following);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [isComments, setIsComments] = useState(false);
   const dispatch = useDispatch();
   const token = useSelector((state) => state.token);
   const loggedInUserId = useSelector((state) => state.user._id);
+  const isFriend = friends.find((friend) => friend._id === postUserId);
+  const isFollowing = following.find((follow) => follow._id === postUserId);
   const { _id } = useSelector((state) => state.user);
   const isLiked = Boolean(likes[loggedInUserId]);
   const likeCount = Object.keys(likes).length;
-
   const { palette } = useTheme();
   const main = palette.neutral.main;
   const primary = palette.primary.main;
@@ -165,6 +166,7 @@ const PostWidget = ({
     );
     const data = await response.json();
     dispatch(setFriends({ friends: data }));
+    dispatch(setFollowing({ following: data }));
   };
 
   const patchFriend = async () => {
@@ -186,7 +188,20 @@ const PostWidget = ({
     <WidgetWrapper m="2rem 0">
       <FlexBetween sx={{ alignItems: "flex-start" }}>
         <Box sx={{ display: "flex", alignItems: "top" }}>
-          <UserImage image={userPicturePath} size="50px" />
+          <Box
+            sx={{
+              "&:hover": {
+                cursor: "pointer",
+              },
+            }}
+            onClick={() => {
+              navigate(`/profile/${postUserId}`);
+              navigate(0);
+            }}
+          >
+            <UserImage image={userPicturePath} size="50px" />
+          </Box>
+
           <Box sx={{ marginLeft: "1rem" }}>
             <Box sx={{ display: "flex", alignItems: "center" }}>
               <Typography
@@ -229,7 +244,7 @@ const PostWidget = ({
                     },
                   }}
                 >
-                  {isFriend ? "Unfollow" : "Follow"}
+                  {isFollowing ? "Unfollow" : "Follow"}
                 </Typography>
               </>
             )}

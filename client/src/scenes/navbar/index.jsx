@@ -126,6 +126,30 @@ const Navbar = () => {
         </FlexBetween>
       ) : (
         <>
+          <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            sx={{
+              backgroundColor: alt,
+            }}
+          >
+            <Typography
+              fontWeight="bold"
+              fontSize="clamp(1rem, 2rem, 2.25rem)"
+              color="primary"
+              onClick={() => navigate("/home")}
+              sx={{
+                "&:hover": {
+                  color: primaryLight,
+                  cursor: "pointer",
+                },
+                padding: 0,
+              }}
+            >
+              Couple Journey
+            </Typography>
+          </Box>
           {/* MOBILE NAV */}
           <Box
             sx={{

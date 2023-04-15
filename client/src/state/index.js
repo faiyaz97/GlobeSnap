@@ -32,6 +32,13 @@ export const authSlice = createSlice({
         console.error("user friends non-existent :(");
       }
     },
+    setFollowing: (state, action) => {
+      if (state.user) {
+        state.user.following = action.payload.following;
+      } else {
+        console.error("user following non-existent :(");
+      }
+    },
     setPosts: (state, action) => {
       state.posts = action.payload.posts;
     },
@@ -68,5 +75,6 @@ export const {
   setPost,
   setUser,
   deleteComment,
+  setFollowing,
 } = authSlice.actions;
 export default authSlice.reducer;

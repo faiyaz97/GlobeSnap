@@ -4,8 +4,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { deleteComment } from "state";
 import { useState, useEffect } from "react";
 import moment from "moment";
+import { useNavigate } from "react-router-dom";
 
 const Comment = ({ comment, postId }) => {
+  const navigate = useNavigate();
   const { palette } = useTheme();
   const main = palette.neutral.main;
   const { userId, text, timestamp } = comment;
@@ -51,21 +53,45 @@ const Comment = ({ comment, postId }) => {
   return (
     <Box display="flex" alignItems="flex-start" mb="1rem">
       {userDetails && userDetails.picturePath && (
-        <img
-          style={{
-            objectFit: "cover",
-            borderRadius: "50%",
-            marginRight: "1rem",
+        <Box
+          sx={{
+            "&:hover": {
+              cursor: "pointer",
+            },
           }}
-          width={30}
-          height={30}
-          alt="user"
-          src={`http://localhost:3001/assets/${userDetails.picturePath}`}
-        />
+          onClick={() => {
+            navigate(`/profile/${userId}`);
+            navigate(0);
+          }}
+        >
+          <img
+            style={{
+              objectFit: "cover",
+              borderRadius: "50%",
+              marginRight: "1rem",
+            }}
+            width={30}
+            height={30}
+            alt="user"
+            src={`http://localhost:3001/assets/${userDetails.picturePath}`}
+          />{" "}
+        </Box>
       )}
       <Box display="flex" flexDirection="column" justifyContent="center">
         {userDetails && (
-          <Typography variant="h6">
+          <Typography
+            variant="h6"
+            sx={{
+              "&:hover": {
+                color: palette.primary.dark,
+                cursor: "pointer",
+              },
+            }}
+            onClick={() => {
+              navigate(`/profile/${userId}`);
+              navigate(0);
+            }}
+          >
             {userDetails.firstName} {userDetails.lastName}
           </Typography>
         )}

@@ -81,7 +81,17 @@ const UserWidget = ({ userId, picturePath }) => {
             mt: "1rem",
           }}
         >
-          <Box>
+          <Box
+            sx={{
+              "&:hover": {
+                cursor: "pointer",
+              },
+            }}
+            onClick={() => {
+              navigate(`/profile/${user._id}`);
+              navigate(0);
+            }}
+          >
             <UserImage image={picturePath} size="100px" />
           </Box>
           <Box>
@@ -93,13 +103,17 @@ const UserWidget = ({ userId, picturePath }) => {
                   cursor: "pointer",
                 },
               }}
+              onClick={() => {
+                navigate(`/profile/${user._id}`);
+                navigate(0);
+              }}
             >
               {firstName} {lastName}
             </Typography>
           </Box>
           <Box sx={{ mt: "0.75rem" }}>
             <Typography variant="body1" color={main}>
-              Questa e' la vita nostra. Ciao!
+              bio
             </Typography>
           </Box>
         </Box>
