@@ -6,7 +6,7 @@ import {
   useMediaQuery,
   Typography,
   useTheme,
-  Autocomplete
+  Autocomplete,
 } from "@mui/material";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import { Formik } from "formik";
@@ -18,15 +18,13 @@ import Dropzone from "react-dropzone";
 import FlexBetween from "components/FlexBetween";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import countries from 'data/countries.json';
+import countries from "data/countries.json";
 
 const registerSchema = yup.object().shape({
   firstName: yup.string().required("required"),
   lastName: yup.string().required("required"),
   location: yup.mixed().required("required"),
-  picture: yup
-  .mixed()
-  .test("fileSelected", "Picture is required", (value) => {
+  picture: yup.mixed().test("fileSelected", "Picture is required", (value) => {
     if (Array.isArray(value)) {
       return value.length > 0;
     } else {
@@ -67,7 +65,6 @@ const initialValuesRegister = {
   password: "",
   location: null,
   picture: "",
-
 };
 
 const initialValuesLogin = {
@@ -90,16 +87,16 @@ const Form = () => {
     // this allows us to send form info with image
     const formData = new FormData();
     for (let value in values) {
-      if (value === 'location') {
+      if (value === "location") {
         formData.append(value, JSON.stringify(values[value]));
       } else {
         formData.append(value, values[value]);
       }
     }
     formData.append("picturePath", values.picture.name);
-  
+
     const savedUserResponse = await fetch(
-      "http://localhost:3001/auth/register",
+      `${process.env.REACT_APP_BASE_URL}/auth/register`,
       {
         method: "POST",
         body: formData,
@@ -107,26 +104,30 @@ const Form = () => {
     );
     const savedUser = await savedUserResponse.json();
     onSubmitProps.resetForm();
-  
+
     if (savedUser) {
-      setImageUrl("")
+      setImageUrl("");
       setPageType("login");
-      toast.success("Registration successful! Please login with your credentials.");
+      toast.success(
+        "Registration successful! Please login with your credentials."
+      );
     }
   };
-  
 
   const login = async (values, onSubmitProps) => {
-    const loggedInResponse = await fetch("http://localhost:3001/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(values),
-    });
+    const loggedInResponse = await fetch(
+      `${process.env.REACT_APP_BASE_URL}/auth/login`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(values),
+      }
+    );
     const loggedIn = await loggedInResponse.json();
     console.log("loggedIn: ", loggedIn);
     onSubmitProps.resetForm();
     if (loggedIn.msg === "Success") {
-      console.log("sempre?")
+      console.log("sempre?");
       dispatch(
         setLogin({
           user: loggedIn.user,
@@ -134,7 +135,7 @@ const Form = () => {
         })
       );
       navigate("/home");
-    } else{
+    } else {
       toast.error(loggedIn.msg);
     }
   };
@@ -147,14 +148,11 @@ const Form = () => {
   return (
     <Box>
       <Formik
-      enableReinitialize
-      onSubmit={handleFormSubmit}
-      initialValues={isLogin ? initialValuesLogin : initialValuesRegister}
-      validationSchema={isLogin ? loginSchema : registerSchema}
-
-      
+        enableReinitialize
+        onSubmit={handleFormSubmit}
+        initialValues={isLogin ? initialValuesLogin : initialValuesRegister}
+        validationSchema={isLogin ? loginSchema : registerSchema}
       >
-        
         {({
           values,
           errors,
@@ -164,7 +162,7 @@ const Form = () => {
           handleSubmit,
           setFieldValue,
           resetForm,
-          validateField
+          validateField,
         }) => (
           <form onSubmit={handleSubmit}>
             <Box
@@ -173,14 +171,17 @@ const Form = () => {
               gridTemplateColumns="repeat(4, minmax(0, 1fr))"
               sx={{
                 "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
-                
               }}
             >
               {isRegister && (
                 <>
                   <Box
                     gridColumn="span 4"
-                    sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
                   >
                     <Dropzone
                       acceptedFiles=".jpg,.jpeg,.png"
@@ -196,15 +197,18 @@ const Form = () => {
                         <Box
                           {...getRootProps()}
                           border={`2px dashed ${palette.primary.main}`}
-                          height= "130px"
+                          height="130px"
                           width="130px"
-                          sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', "&:hover": { cursor: "pointer" } }}
+                          sx={{
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            "&:hover": { cursor: "pointer" },
+                          }}
                         >
                           <input {...getInputProps()} />
-                          {!imageUrl  ? (
-                            <Typography>
-                            Add Picture
-                            </Typography>
+                          {!imageUrl ? (
+                            <Typography>Add Picture</Typography>
                           ) : (
                             <img src={imageUrl} alt="uploaded" height="120" />
                           )}
@@ -216,15 +220,19 @@ const Form = () => {
                   {touched.picture && errors.picture && (
                     <Box
                       gridColumn="span 4"
-                      sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+                      sx={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
                       mt="-30px"
                     >
-                        <Typography color="error" variant="caption">
-                          {errors.picture}
-                        </Typography>
+                      <Typography color="error" variant="caption">
+                        {errors.picture}
+                      </Typography>
                     </Box>
                   )}
-                  
+
                   <TextField
                     label="First Name"
                     onBlur={handleBlur}
@@ -243,7 +251,9 @@ const Form = () => {
                     onChange={handleChange}
                     value={values.lastName}
                     name="lastName"
-                    error={Boolean(touched.lastName) && Boolean(errors.lastName)}
+                    error={
+                      Boolean(touched.lastName) && Boolean(errors.lastName)
+                    }
                     helperText={touched.lastName && errors.lastName}
                     sx={{ gridColumn: "span 2" }}
                   />
@@ -251,14 +261,16 @@ const Form = () => {
                     <Autocomplete
                       options={countries}
                       getOptionLabel={(option) => option.name}
-                      value={values.location || null} 
-              
+                      value={values.location || null}
                       onChange={(event, value) => {
                         setFieldValue("location", value);
                       }}
-
                       renderOption={(props, option) => (
-                        <Box component="li" sx={{ '& > img': { mr: 2, flexShrink: 0 } }} {...props}>
+                        <Box
+                          component="li"
+                          sx={{ "& > img": { mr: 2, flexShrink: 0 } }}
+                          {...props}
+                        >
                           <img
                             loading="lazy"
                             width="20"
@@ -269,7 +281,6 @@ const Form = () => {
                           {option.name}
                         </Box>
                       )}
-
                       renderInput={(params) => (
                         <TextField
                           {...params}
@@ -281,16 +292,16 @@ const Form = () => {
                           InputProps={{
                             ...params.InputProps,
                             startAdornment: values.location ? (
-                              <img src={`https://flagcdn.com/w20/${values.location.code.toLowerCase()}.png`} alt={`${values.location.name} flag`} />
-                            ) : null
+                              <img
+                                src={`https://flagcdn.com/w20/${values.location.code.toLowerCase()}.png`}
+                                alt={`${values.location.name} flag`}
+                              />
+                            ) : null,
                           }}
                         />
                       )}
                     />
                   </Box>
-                  
-
-                              
                 </>
               )}
 
@@ -357,8 +368,6 @@ const Form = () => {
 
       <ToastContainer />
     </Box>
-    
-    
   );
 };
 
