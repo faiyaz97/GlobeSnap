@@ -67,7 +67,7 @@ const PostWidget = ({
 
   const handleCommentSubmit = async () => {
     const response = await fetch(
-      `http://localhost:3001/posts/${postId}/comment`,
+      `${process.env.REACT_APP_BASE_URL}/posts/${postId}/comment`,
       {
         method: "POST",
         headers: {
@@ -89,13 +89,16 @@ const PostWidget = ({
 
   const deletePost = async (postId) => {
     try {
-      const response = await fetch(`http://localhost:3001/posts/${postId}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await fetch(
+        `${process.env.REACT_APP_BASE_URL}/posts/${postId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       if (response.ok) {
         const { posts, user } = await response.json();
@@ -133,14 +136,17 @@ const PostWidget = ({
   };
 
   const patchLike = async () => {
-    const response = await fetch(`http://localhost:3001/posts/${postId}/like`, {
-      method: "PATCH",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ userId: loggedInUserId }),
-    });
+    const response = await fetch(
+      `${process.env.REACT_APP_BASE_URL}/posts/${postId}/like`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId: loggedInUserId }),
+      }
+    );
     const updatedPost = await response.json();
     dispatch(setPost({ post: updatedPost }));
   };
@@ -155,7 +161,7 @@ const PostWidget = ({
 
   const patchFollow = async () => {
     const response = await fetch(
-      `http://localhost:3001/users/${_id}/follow/${postUserId}`,
+      `${process.env.REACT_APP_BASE_URL}/users/${_id}/follow/${postUserId}`,
       {
         method: "PATCH",
         headers: {
@@ -171,7 +177,7 @@ const PostWidget = ({
 
   const patchFriend = async () => {
     const response = await fetch(
-      `http://localhost:3001/users/${_id}/${postUserId}`,
+      `${process.env.REACT_APP_BASE_URL}/users/${_id}/${postUserId}`,
       {
         method: "PATCH",
         headers: {
@@ -292,7 +298,7 @@ const PostWidget = ({
                 width: "100%",
                 maxWidth: "100%",
               }}
-              src={`http://localhost:3001/assets/${picturePath}`}
+              src={`${process.env.REACT_APP_BASE_URL}/assets/${picturePath}`}
             />
           </Box>
         )}

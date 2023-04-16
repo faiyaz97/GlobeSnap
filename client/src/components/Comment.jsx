@@ -18,10 +18,13 @@ const Comment = ({ comment, postId }) => {
   const dateTimeAgo = moment(new Date(timestamp)).fromNow();
 
   const fetchUserDetails = async () => {
-    const response = await fetch(`http://localhost:3001/users/${userId}`, {
-      method: "GET",
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const response = await fetch(
+      `${process.env.REACT_APP_BASE_URL}/users/${userId}`,
+      {
+        method: "GET",
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
     const data = await response.json();
     setUserDetails(data);
   };
@@ -34,7 +37,7 @@ const Comment = ({ comment, postId }) => {
 
   const handleDeleteComment = async () => {
     const response = await fetch(
-      `http://localhost:3001/posts/${postId}/comment/${comment._id}`,
+      `${process.env.REACT_APP_BASE_URL}/posts/${postId}/comment/${comment._id}`,
       {
         method: "DELETE",
         headers: {
@@ -73,7 +76,7 @@ const Comment = ({ comment, postId }) => {
             width={30}
             height={30}
             alt="user"
-            src={`http://localhost:3001/assets/${userDetails.picturePath}`}
+            src={`${process.env.REACT_APP_BASE_URL}/assets/${userDetails.picturePath}`}
           />{" "}
         </Box>
       )}

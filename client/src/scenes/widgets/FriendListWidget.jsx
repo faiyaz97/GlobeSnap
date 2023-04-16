@@ -13,7 +13,7 @@ const FriendListWidget = ({ userId }) => {
 
   const getFollowing = async () => {
     const response = await fetch(
-      `http://localhost:3001/users/${userId}/following`,
+      `${process.env.REACT_APP_BASE_URL}/users/${userId}/following`,
       {
         method: "GET",
         headers: { Authorization: `Bearer ${token}` },
@@ -25,7 +25,7 @@ const FriendListWidget = ({ userId }) => {
 
   const getFriends = async () => {
     const response = await fetch(
-      `http://localhost:3001/users/${userId}/friends`,
+      `${process.env.REACT_APP_BASE_URL}/users/${userId}/friends`,
       {
         method: "GET",
         headers: { Authorization: `Bearer ${token}` },
