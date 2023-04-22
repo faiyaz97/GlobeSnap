@@ -72,7 +72,7 @@ const Navbar = () => {
                 padding: 0,
               }}
             >
-              Couple Journey
+              GlobeSnap
             </Typography>
           </Box>
           <FlexBetween gap="2rem">

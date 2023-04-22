@@ -5,6 +5,7 @@ import UserWidget from "scenes/widgets/UserWidget";
 import MyPostWidget from "scenes/widgets/MyPostWidget";
 import PostsWidget from "scenes/widgets/PostsWidget";
 import FriendListWidget from "scenes/widgets/FriendListWidget";
+import Footer from "components/Footer";
 
 const HomePage = () => {
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
@@ -28,7 +29,7 @@ const HomePage = () => {
           mt={isNonMobileScreens ? undefined : "2rem"}
         >
           <MyPostWidget picturePath={picturePath} />
-          <Divider sx={{ mt: "2rem" }} />
+          <Divider sx={{ m: "2rem 0" }} />
           <PostsWidget userId={_id} />
         </Box>
         {isNonMobileScreens && (

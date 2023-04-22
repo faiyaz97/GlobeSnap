@@ -191,7 +191,7 @@ const PostWidget = ({
   };
 
   return (
-    <WidgetWrapper m="2rem 0">
+    <WidgetWrapper>
       <FlexBetween sx={{ alignItems: "flex-start" }}>
         <Box sx={{ display: "flex", alignItems: "top" }}>
           <Box
