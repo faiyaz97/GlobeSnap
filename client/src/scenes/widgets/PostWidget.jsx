@@ -2,10 +2,7 @@ import {
   ChatBubbleOutlineOutlined,
   FavoriteBorderOutlined,
   FavoriteOutlined,
-  ShareOutlined,
   MoreHoriz,
-  PersonAddOutlined,
-  PersonRemoveOutlined,
 } from "@mui/icons-material";
 import {
   Box,
@@ -17,7 +14,6 @@ import {
   Zoom,
 } from "@mui/material";
 import FlexBetween from "components/FlexBetween";
-import Friend from "components/Friend";
 import WidgetWrapper from "components/WidgetWrapper";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -26,7 +22,7 @@ import MoreOptionsDialog from "components/MoreOptionsDialog";
 import UserImage from "components/UserImage";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AddCommentForm from "components/AddCommentForm";
 import Comment from "components/Comment";
@@ -53,7 +49,6 @@ const PostWidget = ({
   const dispatch = useDispatch();
   const token = useSelector((state) => state.token);
   const loggedInUserId = useSelector((state) => state.user._id);
-  const isFriend = friends.find((friend) => friend._id === postUserId);
   const isFollowing = following.find((follow) => follow._id === postUserId);
   const { _id } = useSelector((state) => state.user);
   const isLiked = Boolean(likes[loggedInUserId]);
@@ -61,8 +56,6 @@ const PostWidget = ({
   const { palette } = useTheme();
   const main = palette.neutral.main;
   const primary = palette.primary.main;
-  const primaryLight = palette.primary.light;
-  const primaryDark = palette.primary.dark;
   const medium = palette.neutral.medium;
 
   const handleCommentSubmit = async () => {
@@ -103,9 +96,7 @@ const PostWidget = ({
       if (response.ok) {
         const { posts, user } = await response.json();
 
-        // Update your posts state with the updatedPosts
         dispatch(setPosts({ posts }));
-        // Update the user state with the updated user object
         dispatch(setLogin({ user, token }));
 
         toast.success("Post deleted successfully!", {
@@ -173,21 +164,6 @@ const PostWidget = ({
     const data = await response.json();
     dispatch(setFriends({ friends: data }));
     dispatch(setFollowing({ following: data }));
-  };
-
-  const patchFriend = async () => {
-    const response = await fetch(
-      `${process.env.REACT_APP_BASE_URL}/users/${_id}/${postUserId}`,
-      {
-        method: "PATCH",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    const data = await response.json();
-    dispatch(setFriends({ friends: data }));
   };
 
   return (

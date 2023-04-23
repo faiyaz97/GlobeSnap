@@ -6,7 +6,6 @@ import {
   Graticule,
   Annotation,
   ZoomableGroup,
-  Marker,
 } from "react-simple-maps";
 import { useTheme, Tooltip } from "@mui/material";
 import ColorHash from "color-hash";
@@ -21,12 +20,8 @@ const MapChart = ({ user }) => {
   const neutralLight = theme.palette.neutral.light;
   const neutralMedium = theme.palette.neutral.medium;
   const neutralDark = theme.palette.neutral.dark;
-  const dark = theme.palette.neutral.dark;
-  const background = theme.palette.background.default;
   const primaryDark = theme.palette.primary.dark;
   const primaryLight = theme.palette.primary.light;
-  const primaryMain = theme.palette.primary.main;
-  const alt = theme.palette.background.alt;
 
   const [position, setPosition] = useState({ coordinates: [0, 0], zoom: 1 });
   function handleMoveEnd(position) {

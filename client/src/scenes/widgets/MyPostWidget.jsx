@@ -1,15 +1,6 @@
-import {
-  MoreHorizIcon,
-  DeleteOutlined,
-  AttachFileOutlined,
-  GifBoxOutlined,
-  AddPhotoAlternateOutlined,
-  MicOutlined,
-  MoreHorizOutlined,
-} from "@mui/icons-material";
+import { DeleteOutlined, AddPhotoAlternateOutlined } from "@mui/icons-material";
 import {
   Box,
-  Divider,
   Typography,
   InputBase,
   useTheme,
@@ -21,7 +12,6 @@ import {
 } from "@mui/material";
 import FlexBetween from "components/FlexBetween";
 import Dropzone from "react-dropzone";
-import UserImage from "components/UserImage";
 import WidgetWrapper from "components/WidgetWrapper";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -41,7 +31,6 @@ const MyPostWidget = ({ picturePath }) => {
   const { palette } = useTheme();
   const { _id } = useSelector((state) => state.user);
   const token = useSelector((state) => state.token);
-  const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
   const mediumMain = palette.neutral.mediumMain;
   const medium = palette.neutral.medium;
 

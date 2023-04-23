@@ -23,18 +23,6 @@ const FriendListWidget = ({ userId }) => {
     dispatch(setFriends({ friends: data }));
   };
 
-  const getFriends = async () => {
-    const response = await fetch(
-      `${process.env.REACT_APP_BASE_URL}/users/${userId}/friends`,
-      {
-        method: "GET",
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
-    const data = await response.json();
-    dispatch(setFriends({ friends: data }));
-  };
-
   useEffect(() => {
     getFollowing();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps

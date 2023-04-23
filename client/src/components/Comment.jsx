@@ -1,5 +1,4 @@
-import { Box, IconButton, Typography, useTheme, Button } from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
+import { Box, Typography, useTheme, Button } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { deleteComment } from "state";
 import { useState, useEffect } from "react";
